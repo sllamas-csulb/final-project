@@ -1,0 +1,54 @@
+<%- include("_header") -%>
+
+<h2>Find Customers</h2>
+
+<h4>Total number of records in the database: <%= totRecs %></h4>
+
+<!-- Not using bootstrap, just a simple form that you may enhance -->
+<!-- Using AJAX, not form action -->
+<form>
+    <table>
+        <tr>
+            <td><label for="cusId">Customer ID</label>:</td>
+            <td><input type="text" name="cusId" id="cusId" /></td>
+            <td>(equal)</td>
+        </tr>
+        <tr>
+            <td><label for="cusFname">First Name</label>:</td>
+            <td><input type="text" name="cusFname" id="cusFname" /></td>
+            <td>(starts with)</td>
+        </tr>
+        <tr>
+            <td><label for="cusLname">Last Name</label>:</td>
+            <td><input type="text" name="cusLname" id="cusLname" /></td>
+            <td>(starts with)</td>
+        </tr>
+        <tr>
+            <td><label for="cusState">State</label>:</td>
+            <td><input type="text" name="cusState" id="cusState" /></td>
+            <td>(equals)</td>
+        </tr>
+        <tr>
+            <td><label for="cusSalesYTD">Sales YTD</label>:</td>
+            <td><input type="text" name="cusSalesYTD" id="cusSalesYTD" /></td>
+            <td>(greater than or equal)</td>
+        </tr>
+        <tr>
+            <td><label for="cusSalesPrev">Sales Previous</label>:</td>
+            <td><input type="text" name="cusSalesPrev" id="cusSalesPrev" /></td>
+            <td>(greater than or equal)</td>
+        </tr>
+        <tr>
+            <td span="2">
+                <input type="submit" value="Find" />
+                <input type="reset" value="Reset" />
+            </td>
+        </tr>
+    </table>
+</form>
+
+<div id="output"></div>
+
+<script src="searchajax.js"></script>
+
+<%- include("_footer") -%>   
