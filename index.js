@@ -47,3 +47,13 @@ app.post("/manage", async (req, res) => {
       .then(result => res.send(result))
       .catch(err => res.send({trans: "Error", result: err.message}));
 });
+
+app.get("/create", (req, res) => {
+  res.render("createajax");
+});
+
+app.post("/create", async (req, res) => {
+  await dblib.insertCustomer(req.body)
+      .then(result => res.send(result))
+      .catch(err => res.send({trans: "Error", result: err.message}));
+});

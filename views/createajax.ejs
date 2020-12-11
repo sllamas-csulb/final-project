@@ -1,0 +1,47 @@
+<%- include("_header") -%>
+
+<h2>Create Customer</h2>
+
+<!-- Not using bootstrap, just a simple form that you may enhance -->
+<!-- Using AJAX, not form action -->
+<form>
+    <table>
+        <tr>
+            <td><label for="cusFname">First Name</label>:</td>
+            <td><input type="text" name="cusFname" id="cusFname" /></td>
+            <td>(Required)</td>
+        </tr>
+        <tr>
+            <td><label for="cusLname">Last Name</label>:</td>
+            <td><input type="text" name="cusLname" id="cusLname" /></td>
+            <td>(Required)</td>
+        </tr>
+        <tr>
+            <td><label for="cusState">State</label>:</td>
+            <td><input type="text" name="cusState" id="cusState" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="cusSalesYTD">Sales YTD</label>:</td>
+            <td><input type="text" name="cusSalesYTD" id="cusSalesYTD" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="cusSalesPrev">Sales Previous</label>:</td>
+            <td><input type="text" name="cusSalesPrev" id="cusSalesPrev" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td span="2">
+                <input type="submit" value="Create" />
+                <input type="reset" value="Reset" />
+            </td>
+        </tr>
+    </table>
+</form>
+
+<div id="output"></div>
+
+<script src="createajax.js"></script>
+
+<%- include("_footer") -%>   

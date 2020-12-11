@@ -12,7 +12,7 @@ console.log("Successful connection to the database");
 
 const sql_create = `DROP TABLE IF EXISTS customer;
 CREATE TABLE customer (
-    cusId        INTEGER PRIMARY KEY,
+    cusId        SERIAL PRIMARY KEY,
     cusFname     VARCHAR(20) NOT NULL,
 	cusLname     VARCHAR(30) NOT NULL,
 	cusState     CHAR(2),
@@ -125,5 +125,66 @@ const findCustomers = (customer) => {
         });
 };
 
+const insertCustomer = (customer) => {
+    var i = 0;
+    params = [];
+    
+    params.push(`${customer.cusFname}`);  
+    i++;
+
+    params.push(`${customer.cusLname}`);
+    i++;
+
+    if (customer.cusState !== "") {
+        params.push(`${customer.cusState}`);
+    }
+    else
+    {
+        params.push(``);
+    }
+    i++;
+    
+    if (customer.cusSalesYTD !== "") {
+        params.push( "$" + parseFloat(customer.cusSalesYTD) );
+    }
+    else
+    {
+        params.push( "$0.00" );
+    }
+    i++;
+
+    if (customer.cusSalesPrev !== "") {
+        params.push( "$" + parseFloat(customer.cusSalesPrev) );
+    }
+    else
+    {
+        params.push( "$0.00" );
+    }
+    i++;
+    
+    const sql = `INSERT INTO customer (cusFname, cusLname, cusState, cusSalesYTD, cusSalesPrev)
+                 VALUES ($1, $2, $3, $4, $5)`;
+
+                 
+     console.log("sql: " + sql);
+     console.log("params: " + params);
+
+    return pool.query(sql, params)
+        .then(res => {
+            return {
+                trans: "success", 
+                result: `customer ${params[0]} ${params[1]} successfully inserted`
+            };
+        })
+        .catch(err => {
+            return {
+                trans: "error", 
+                result: `Error on insert of customer ${params[0]} ${params[1]}.  ${err.message}`
+            };
+        });
+};
+
+
 module.exports.getTotalRecords = getTotalRecords;
 module.exports.findCustomers = findCustomers;
+module.exports.insertCustomer = insertCustomer;
