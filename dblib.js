@@ -74,32 +74,32 @@ const findCustomers = (customer) => {
     sql = "SELECT * FROM customer WHERE true";
 
     // Check data provided and build query as necessary
-    if (customer.cusId !== "") {
+    if ( customer.cusId && customer.cusId !== "") {
         params.push(parseInt(customer.cusId));
         sql += ` AND cusId = ${params[i]}`;
         i++;
     };
-    if (customer.cusFname !== "") {
+    if (customer.cusFname && customer.cusFname !== "") {
         params.push(`${customer.cusFname}%`);
         sql += ` AND cusFname ILIKE '${params[i]}'`;
         i++;
     };
-    if (customer.cusLname !== "") {
+    if ( customer.cusLname && customer.cusLname !== "") {
         params.push(`${customer.cusLname}%`);
         sql += ` AND cusLname ILIKE '${params[i]}'`;
         i++;
     };
-    if (customer.cusState !== "") {
+    if ( customer.cusState && customer.cusState !== "") {
         params.push(`${customer.cusState}%`);
         sql += ` AND cusState ILIKE '${params[i]}'`;
         i++;
     };
-    if (customer.cusSalesYTD !== "") {
+    if ( customer.cusSalesYTD && customer.cusSalesYTD !== "") {
         params.push(parseFloat(customer.cusSalesYTD));
         sql += ` AND cusSalesYTD >= '\$${params[i]}'`;
         i++;
     };
-    if (customer.cusSalesPrev !== "") {
+    if ( customer.cusSalesPrev && customer.cusSalesPrev !== "") {
         params.push(parseFloat(customer.cusSalesPrev));
         sql += ` AND cusSalesPrev >= '\$${params[i]}'`;
         i++;
@@ -185,6 +185,74 @@ const insertCustomer = (customer) => {
 };
 
 
+const updateCustomer = (customer) => {
+    var i = 0;
+    params = [];
+    
+    params.push(`${customer.cusId}`);  
+    i++;
+
+    params.push(`${customer.cusFname}`);  
+    i++;
+
+    params.push(`${customer.cusLname}`);
+    i++;
+
+    if (customer.cusState !== "") {
+        params.push(`${customer.cusState}`);
+    }
+    else
+    {
+        params.push(``);
+    }
+    i++;
+    
+    if (customer.cusSalesYTD !== "") {
+        params.push( "$" + parseFloat(customer.cusSalesYTD) );
+    }
+    else
+    {
+        params.push( "$0.00" );
+    }
+    i++;
+
+    if (customer.cusSalesPrev !== "") {
+        params.push( "$" + parseFloat(customer.cusSalesPrev) );
+    }
+    else
+    {
+        params.push( "$0.00" );
+    }
+    i++;
+    
+    const sql = `UPDATE customer
+                SET cusFname = $2,
+                    cusLname = $3,
+                    cusState = $4,
+                    cusSalesYTD = $5,
+                    cusSalesPrev = $6
+                WHERE cusId = $1`;
+
+                 
+     console.log("sql: " + sql);
+     console.log("params: " + params);
+
+    return pool.query(sql, params)
+        .then(res => {
+            return {
+                trans: "success", 
+                result: `customer ${params[0]} ${params[1]} successfully updated`
+            };
+        })
+        .catch(err => {
+            return {
+                trans: "error", 
+                result: `Error on update of customer ${params[0]} ${params[1]}.  ${err.message}`
+            };
+        });
+};
+
 module.exports.getTotalRecords = getTotalRecords;
 module.exports.findCustomers = findCustomers;
 module.exports.insertCustomer = insertCustomer;
+module.exports.updateCustomer = updateCustomer;

@@ -1,0 +1,52 @@
+<%- include("_header") -%>
+
+<h2>Update Customer</h2>
+
+<!-- Not using bootstrap, just a simple form that you may enhance -->
+<!-- Using AJAX, not form action -->
+<form>
+    <table>
+        <tr>
+            <td><label for="cusId">ID</label>:</td>
+            <td><input class="form-control" type="text" name="cusId" id="cusId" value="<%= model.cusid %>" readonly/></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="cusFname">First Name</label>:</td>
+            <td><input class="form-control" type="text" name="cusFname" id="cusFname" value="<%= model.cusfname %>" /></td>
+            <td>(Required)</td>
+        </tr>
+        <tr>
+            <td><label for="cusLname">Last Name</label>:</td>
+            <td><input class="form-control" type="text" name="cusLname" id="cusLname" value="<%= model.cuslname %>" /></td>
+            <td>(Required)</td>
+        </tr>
+        <tr>
+            <td><label for="cusState">State</label>:</td>
+            <td><input class="form-control" type="text" name="cusState" id="cusState" value="<%= model.cusstate %>" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="cusSalesYTD">Sales YTD</label>:</td>
+            <td><input class="form-control" type="text" name="cusSalesYTD" id="cusSalesYTD" value="<%= model.cussalesytd %>" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="cusSalesPrev">Sales Previous</label>:</td>
+            <td><input class="form-control" type="text" name="cusSalesPrev" id="cusSalesPrev" value="<%= model.cussalesprev %>" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td span="2">
+                <input class="btn btn-warning" type="submit" value="Update" />
+                <a class="btn btn-secondary" href="/manage">Cancel</a>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<div id="output"></div>
+
+<script src="../editajax.js"></script>
+
+<%- include("_footer") -%>   

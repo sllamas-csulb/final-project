@@ -43,6 +43,7 @@ app.get("/manage", async (req, res) => {
 });
 
 app.post("/manage", async (req, res) => {
+  console.log( "POST Manage" );
   await dblib.findCustomers(req.body)
       .then(result => res.send(result))
       .catch(err => res.send({trans: "Error", result: err.message}));
@@ -54,6 +55,31 @@ app.get("/create", (req, res) => {
 
 app.post("/create", async (req, res) => {
   await dblib.insertCustomer(req.body)
+      .then(result => res.send(result))
+      .catch(err => res.send({trans: "Error", result: err.message}));
+});
+
+app.get("/edit/:id", async (req, res) => {
+  console.log( "GET Edit" );
+  if( isNaN( req.params.id ) )
+  {
+    res.send({trans: "Error", result: "Double call"})
+  }
+  else
+  {
+    const customer = { cusId: req.params.id }
+    await dblib.findCustomers( customer )
+    .then( result => 
+      {
+        console.log( result );
+        res.render("editajax", { model: result.result[ 0 ] } );
+      } )
+    .catch(err => res.send({trans: "Error", result: err.message}));
+  }
+});
+
+app.post("/edit/:id", async (req, res) => {
+  await dblib.updateCustomer(req.body)
       .then(result => res.send(result))
       .catch(err => res.send({trans: "Error", result: err.message}));
 });

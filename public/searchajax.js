@@ -23,6 +23,8 @@ const displayResults = (result) => {
                     <td>${customer.cusstate}</td>
                     <td>${customer.cussalesytd}</td>
                     <td>${customer.cussalesprev}</td>
+                    <td><a class="btn btn-primary" href="/edit/${customer.cusid}">Edit</a></td>
+                    <td><a class="btn btn-danger" href="/delete/${customer.cusid}">Delete</a></td>
                 </tr>
              `
             });
@@ -36,6 +38,8 @@ const displayResults = (result) => {
                     <th>State</th>
                     <th>Sales YTD</th>
                     <th>Sales Prev</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
