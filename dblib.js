@@ -252,7 +252,37 @@ const updateCustomer = (customer) => {
         });
 };
 
+
+const deleteCustomer = (customer) => {
+    var i = 0;
+    params = [];
+    params.push(`${customer.cusId}`);  
+    i++;
+
+    const sql = `DELETE FROM customer
+                WHERE cusId = $1`;
+
+                 
+     console.log("sql: " + sql);
+     console.log("params: " + params);
+
+    return pool.query(sql, params)
+        .then(res => {
+            return {
+                trans: "success", 
+                result: `customer ${params[0]} successfully deleted`
+            };
+        })
+        .catch(err => {
+            return {
+                trans: "error", 
+                result: `Error on delete of customer ${params[0]}.  ${err.message}`
+            };
+        });
+};
+
 module.exports.getTotalRecords = getTotalRecords;
 module.exports.findCustomers = findCustomers;
 module.exports.insertCustomer = insertCustomer;
 module.exports.updateCustomer = updateCustomer;
+module.exports.deleteCustomer = deleteCustomer;

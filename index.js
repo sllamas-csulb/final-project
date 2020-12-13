@@ -60,13 +60,6 @@ app.post("/create", async (req, res) => {
 });
 
 app.get("/edit/:id", async (req, res) => {
-  console.log( "GET Edit" );
-  if( isNaN( req.params.id ) )
-  {
-    res.send({trans: "Error", result: "Double call"})
-  }
-  else
-  {
     const customer = { cusId: req.params.id }
     await dblib.findCustomers( customer )
     .then( result => 
@@ -75,11 +68,27 @@ app.get("/edit/:id", async (req, res) => {
         res.render("editajax", { model: result.result[ 0 ] } );
       } )
     .catch(err => res.send({trans: "Error", result: err.message}));
-  }
 });
 
 app.post("/edit/:id", async (req, res) => {
   await dblib.updateCustomer(req.body)
       .then(result => res.send(result))
       .catch(err => res.send({trans: "Error", result: err.message}));
+});
+
+app.get("/delete/:id", async (req, res) => {
+  const customer = { cusId: req.params.id }
+  await dblib.findCustomers( customer )
+  .then( result => 
+    {
+      console.log( result );
+      res.render("deleteajax", { model: result.result[ 0 ] } );
+    } )
+  .catch(err => res.send({trans: "Error", result: err.message}));
+});
+
+app.post("/delete/:id", async (req, res) => {
+await dblib.deleteCustomer(req.body)
+    .then(result => res.send(result))
+    .catch(err => res.send({trans: "Error", result: err.message}));
 });
