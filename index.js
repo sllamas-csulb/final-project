@@ -43,7 +43,6 @@ app.get("/manage", async (req, res) => {
 });
 
 app.post("/manage", async (req, res) => {
-  console.log( "POST Manage" );
   await dblib.findCustomers(req.body)
       .then(result => res.send(result))
       .catch(err => res.send({trans: "Error", result: err.message}));
@@ -91,4 +90,15 @@ app.post("/delete/:id", async (req, res) => {
 await dblib.deleteCustomer(req.body)
     .then(result => res.send(result))
     .catch(err => res.send({trans: "Error", result: err.message}));
+});
+
+app.get("/reports", async (req, res) => {
+  // Omitted validation check
+  res.render("reportsajax");
+});
+
+app.post("/reports", async (req, res) => {
+  await dblib.findCustomers( req.body, req.body.reportId )
+      .then(result => res.send(result))
+      .catch(err => res.send({trans: "Error", result: err.message}));
 });

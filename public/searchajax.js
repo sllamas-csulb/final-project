@@ -38,8 +38,7 @@ const displayResults = (result) => {
                     <th>State</th>
                     <th>Sales YTD</th>
                     <th>Sales Prev</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th colspan="2"><a class="btn btn-secondary" href="/create">Create Customer</a></th>
                 </tr>
             </thead>
             <tbody>

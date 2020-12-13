@@ -1,0 +1,21 @@
+<%- include("_header") -%>
+
+<h2>Reports</h2>
+
+<!-- Not using bootstrap, just a simple form that you may enhance -->
+<!-- Using AJAX, not form action -->
+<form>
+    <label for="reportId">Select Report</label><br/>
+    <select name="reportId" id="reportId">
+        <option value="customersByName" selected>All Customers - Sorted by Customer Last Name, First Name</option>
+        <option value="customersBySales">All Customers - Sorted by Current Total Sales Decreasing</option>
+        <option value="customersRandom">Three Random Customers - Promotional Giveaway (Not Repeating)</option>
+    </select><br/>
+    <input type="submit" value="Run Report" />
+</form>
+
+<div id="output"></div>
+
+<script src="reportsajax.js"></script>
+
+<%- include("_footer") -%>   

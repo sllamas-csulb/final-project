@@ -64,7 +64,20 @@ const getTotalRecords = () => {
         });
 };
 
-const findCustomers = (customer) => {
+function get3Random(items)
+{
+    for (i = 0; i < 3; ++i )
+    {
+        var rIdx = i + Math.floor( Math.random() * (items.length - i) );
+        var temp = items[ i ];
+        items[ i ] = items[ rIdx ];
+        items[ rIdx ] = temp;
+    }
+
+    return items.slice( 0, 3 );
+}
+
+const findCustomers = ( customer, sortType ) => {
     // Will build query based on data provided from the form
     //  Use parameters to avoid sql injection
 
@@ -105,16 +118,50 @@ const findCustomers = (customer) => {
         i++;
     };
 
-    sql += ` ORDER BY cusId`;
+    if( sortType == "customersByName" )
+    {
+        sql += ` ORDER BY cusLname, cusFname`;
+    }
+    else if( sortType == "customersBySales" )
+    {
+        sql += ` ORDER BY cusSalesYTD DESC`;
+    }
+    else
+    {
+        sql += ` ORDER BY cusId`;
+    }
+
     // for debugging
      console.log("sql: " + sql);
      console.log("params: " + params);
 
     return pool.query(sql)
         .then(result => {
-            return { 
-                trans: "success",
-                result: result.rows
+
+            if( sortType == "customersRandom" )
+            {
+                if( result.rows.length < 3 )
+                {
+                    return {
+                        trans: "Error",
+                        result: `Error: "3 Customers not available"`
+                    }
+                }
+                else
+                {
+                    //shuffle( result.rows );
+                    return { 
+                        trans: "success",
+                        result: get3Random( result.rows )
+                    }
+                }
+            }
+            else
+            {
+                return { 
+                    trans: "success",
+                    result: result.rows
+                }
             }
         })
         .catch(err => {
