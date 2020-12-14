@@ -7,37 +7,106 @@
 <h4>Select a file with customers for database insert:</h4>
 
 <form>
-    <input type="file" name="filename" required><p></p>
+    <input type="file" name="filename" id="filename" required><p></p>
     <input type="submit"  value="Import Customers">
 </form>
 <p id="result"></p>
 
 <script>
-    // Typically, if the script is large, we place it in a separate file
-    //   For demonstrations, it is included in the same file.
-    // Handle form submission
+    /*
+    TODO:
+    -Load file on submit
+    -Wait state
+    -Import summary
+     -Records processed
+     -Successful inserts
+     -Failed inserts
+     -Error log
+    -Database key
+    -Document
+    -Deploy
+    -Submit
+    */
+    var gCustomers = [];
+    var gSendIdx = 0;
+    const fileSelector = document.getElementById('filename');
+    fileSelector.addEventListener('change', (event) => {
+        var fr=new FileReader(); 
+        fr.onload=function()
+        { 
+            document.getElementById('result') .innerHTML="";
+            gCustomers = [];
+            const lines = fr.result.split(/\r?\n/);
+            for( i = 0 ; i <  lines.length; ++i )
+            {
+                fields = lines[i].split(",");
+                var customer =
+                { 
+                cusId : fields[ 0 ],
+                cusFname : fields[ 1 ],
+                cusLname : fields[ 2 ],
+                cusState : fields[ 3 ],
+                cusSalesYTD : fields[ 4 ],
+                cusSalesPrev : fields[ 5 ]
+                };
+                gCustomers.push( customer );
+            }
+        } 
+                
+        fr.readAsText(event.target.files[0]); 
+    });
+
+    function sendNextRequest()
+    {
+        if( gSendIdx < gCustomers.length )
+        {
+            var formData = new FormData();
+            formData.append( "cusId", gCustomers[ gSendIdx ].cusId );
+            formData.append( "cusFname", gCustomers[ gSendIdx ].cusFname );
+            formData.append( "cusLname", gCustomers[ gSendIdx ].cusLname );
+            formData.append( "cusState", gCustomers[ gSendIdx ].cusState );
+            formData.append( "cusSalesYTD", gCustomers[ gSendIdx ].cusSalesYTD );
+            formData.append( "cusSalesPrev", gCustomers[ gSendIdx ].cusSalesPrev );
+
+            // Send form data to the server with an asynchronous POST request
+            fetch("/create", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                const resultElement = document.getElementById("result");
+                if (result.trans === "Error") {
+                    resultElement.innerText = `Error occurred! \n${result.result}`
+                } else {
+                    resultElement.innerText = result.result;
+                };
+
+                ++gSendIdx;
+                sendNextRequest();
+            })
+            .catch(err => {
+                document.getElementById("result").textContent = `Error: ${err.message}`;
+
+                ++gSendIdx;
+                sendNextRequest();
+            });    
+        }
+    }
+    
     document.querySelector("form").addEventListener("submit", e => {
-      // Cancel default behavior of sending a synchronous POST request
       e.preventDefault();
-      // Create a FormData object, passing the form as a parameter
-      const formData = new FormData(e.target);
-      // Send form data to the server with an asynchronous POST request
-      fetch("/import", {
-        method: "POST",
-        body: formData
-      })
-        .then(response => response.text())
-        .then(data => {
-            const resultElement = document.getElementById("result");
-            if (data.substring(0,5) === "Error") {
-                resultElement.innerText = `Error occurred! \n${data}`
-            } else {
-                resultElement.innerText = data;
-            };
-        })
-        .catch(err => {
-            document.getElementById("message").textContent = `Error: ${err.message}`;
-        });
+
+      if( gCustomers.length <= 0 )
+      {
+        alert("Please Select a File!");
+      }
+      else
+      {
+        document.getElementById('result') .innerHTML="";
+        gSendIdx = 0;
+        sendNextRequest();
+      }
     });
     </script>
 
