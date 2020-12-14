@@ -158,6 +158,8 @@ const findCustomers = ( customer, sortType ) => {
             }
             else
             {
+                console.log( "Find Success!" );
+                console.log( "Rows returned: " + result.rows.length );
                 return { 
                     trans: "success",
                     result: result.rows
@@ -165,6 +167,7 @@ const findCustomers = ( customer, sortType ) => {
             }
         })
         .catch(err => {
+            console.log( "Find Error!" );
             return {
                 trans: "Error",
                 result: `Error: ${err.message}`
