@@ -1,9 +1,14 @@
 <%- include("_header") -%>
 
-<h1>Select a file with products for Database Insert</h1>
+<h1>Customer Import</h1>
+
+<h4>Total number of records in the database: <%= totRecs %></h4>
+
+<h4>Select a file with customers for database insert:</h4>
+
 <form>
     <input type="file" name="filename" required><p></p>
-    <input type="submit">
+    <input type="submit"  value="Import Customers">
 </form>
 <p id="result"></p>
 
@@ -17,7 +22,7 @@
       // Create a FormData object, passing the form as a parameter
       const formData = new FormData(e.target);
       // Send form data to the server with an asynchronous POST request
-      fetch("/input", {
+      fetch("/import", {
         method: "POST",
         body: formData
       })
@@ -25,7 +30,7 @@
         .then(data => {
             const resultElement = document.getElementById("result");
             if (data.substring(0,5) === "Error") {
-                resultElement.innerText = `Error occurred!  ${data}`
+                resultElement.innerText = `Error occurred! \n${data}`
             } else {
                 resultElement.innerText = data;
             };

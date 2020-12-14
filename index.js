@@ -103,12 +103,12 @@ app.post("/reports", async (req, res) => {
       .catch(err => res.send({trans: "Error", result: err.message}));
 });
 
-/*
-app.get("/input", (req, res) => {
-  res.render("input");
+app.get("/import", async (req, res) => {
+  const totRecs = await dblib.getTotalRecords();
+  res.render("import",{ totRecs: totRecs.totRecords });
 });
 
-app.post("/input", (req, res) => {
+app.post("/import", async (req, res) => {
    if(!req.files || Object.keys(req.files).length === 0) {
        message = "Error: Import file not uploaded";
        return res.send(message);
@@ -118,23 +118,34 @@ app.post("/input", (req, res) => {
    const buffer = fn.data;
    const lines = buffer.toString().split(/\r?\n/);
 
-   lines.forEach(line => {
-        //console.log(line);
-        product = line.split(",");
-        //console.log(product);
-        const sql = "INSERT INTO PRODUCT(prod_id, prod_name, prod_desc, prod_price) VALUES ($1, $2, $3, $4)";
-        pool.query(sql, product, (err, result) => {
-            if (err) {
-                console.log(`Insert Error.  Error message: ${err.message}`);
-            } else {
-                console.log(`Inserted successfully`);
-            }
-       });
-   });
-   message = `Processing Complete - Processed ${lines.length} records`;
+   message = "";
+   for( i = 0 ; i <  lines.length; ++i )
+   {
+    fields = lines[i].split(",");
+    var customer =
+    { 
+      cusId : fields[ 0 ],
+      cusFname : fields[ 1 ],
+      cusLname : fields[ 2 ],
+      cusState : fields[ 3 ],
+      cusSalesYTD : fields[ 4 ],
+      cusSalesPrev : fields[ 5 ]
+    };
+
+    await dblib.insertCustomer(customer)
+    .then(result => 
+      {
+        message += result.result + "\n";
+      })
+    .catch(err => 
+      {
+        message += err.message + "\n";
+      });
+   }
+
+   message += `Processing Complete - Processed ${lines.length} records`;
    res.send(message);
 }); 
-*/
 
 app.get("/export", async (req, res) => {
   const totRecs = await dblib.getTotalRecords();

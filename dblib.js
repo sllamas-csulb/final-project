@@ -179,6 +179,18 @@ const insertCustomer = (customer) => {
     var i = 0;
     params = [];
     
+    var cusIdNameStr = "";
+    var cusIdIdxStr = "";
+
+    if( customer.cusId && customer.cusId !== "" )
+    {
+        params.push(`${customer.cusId}`);  
+        i++;
+
+        cusIdNameStr = "cusId, ";
+        cusIdIdxStr = ", $6";
+    }
+
     params.push(`${customer.cusFname}`);  
     i++;
 
@@ -212,8 +224,8 @@ const insertCustomer = (customer) => {
     }
     i++;
     
-    const sql = `INSERT INTO customer (cusFname, cusLname, cusState, cusSalesYTD, cusSalesPrev)
-                 VALUES ($1, $2, $3, $4, $5)`;
+    const sql = `INSERT INTO customer (${cusIdNameStr}cusFname, cusLname, cusState, cusSalesYTD, cusSalesPrev)
+                 VALUES ($1, $2, $3, $4, $5${cusIdIdxStr})`;
 
                  
      console.log("sql: " + sql);
@@ -223,13 +235,13 @@ const insertCustomer = (customer) => {
         .then(res => {
             return {
                 trans: "success", 
-                result: `customer ${params[0]} ${params[1]} successfully inserted`
+                result: `customer ${customer.cusFname} ${customer.cusLname} successfully inserted`
             };
         })
         .catch(err => {
             return {
                 trans: "error", 
-                result: `Error on insert of customer ${params[0]} ${params[1]}.  ${err.message}`
+                result: `Error on insert of customer ${customer.cusFname} ${customer.cusLname}.  ${err.message}`
             };
         });
 };
