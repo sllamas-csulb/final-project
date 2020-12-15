@@ -30,6 +30,7 @@ app.listen(process.env.PORT || 3000, () => {
     console.log("Server started (http://localhost:3000/) !");
 });
 
+//Define endpoints
 app.get("/", (req, res) => {
       res.render("index");
 });
@@ -107,6 +108,9 @@ app.get("/import", async (req, res) => {
   const totRecs = await dblib.getTotalRecords();
   res.render("import",{ totRecs: totRecs.totRecords });
 });
+
+//This is an unused endpoint. Left in because I worked on it, got it working at realized it does not meet the spec
+//but it's a perfectly fine piece of code
 
 app.post("/import", async (req, res) => {
    if(!req.files || Object.keys(req.files).length === 0) {

@@ -1,3 +1,5 @@
+<!-- NOTE: this ejs file contains client side javascript -->
+
 <%- include("_header") -%>
 
 <h1>Customer Import</h1>
@@ -14,20 +16,17 @@
 <p id="errors"></p>
 
 <script>
-    /*
-    TODO:
-    -Test
-    -Document
-    -Deploy
-    -Submit
-    */
+    //Define file reader
     var gFileReader = new FileReader();
     gFileReader.onload = function(){ loadCustomers( gFileReader.result ); }
+
+    //Initialize request variables
     var gCustomers = [];
     var gSendIdx = 0;
     var gSuccessCount = 0;
     var gErrorCount = 0;
 
+    //Define customer loader
     function loadCustomers( result )
     { 
         document.getElementById('result') .innerHTML="";
@@ -49,6 +48,7 @@
         }
     } 
 
+    //Define progress displayer
     function displayProgress( resultElement )
     {
         resultElement.innerHTML = "<h3>Import Summary</h3>";
@@ -57,16 +57,19 @@
         resultElement.innerHTML += `<b>Records Not Inserted:</b> ${gErrorCount}<br/>`;
     }
 
+    //Load customers on file select
     const fileSelector = document.getElementById('filename');
     fileSelector.addEventListener('change', (event) => {
         gFileReader.readAsText(event.target.files[0]); 
     });
 
+    //Load customers on page refresh
     if( fileSelector.files.length > 0 )
     {
         gFileReader.readAsText(fileSelector.files[0]);
     }
 
+    //Define request handler
     function sendNextRequest()
     {
         if( gSendIdx < gCustomers.length )
@@ -86,6 +89,7 @@
             })
             .then(response => response.json())
             .then(result => {
+                //Process record and send next request
                 const resultElement = document.getElementById("result");
                 const errorsElement = document.getElementById("errors");
                 if (result.trans === "error")
@@ -128,6 +132,7 @@
       }
       else
       {
+        //Initialize progress and start sending requests
         document.getElementById('result') .innerHTML="<h3>Waiting for Results...</h3>";
         document.getElementById('errors') .innerText="Errors:\n";
         gSendIdx = 0;

@@ -5,13 +5,6 @@ const pool = new Pool({
     ssl: {
       rejectUnauthorized: false
     }
-    /*
-  user: process.env.PSQL_USER,
-  host: process.env.PSQL_HOST,
-  database: process.env.PSQL_DATABASE,
-  password: process.env.PSQL_PASSWORD, 
-  port: process.env.PSQL_PORT
-  */
 });
 
 console.log("Successful connection to the database");
@@ -26,6 +19,7 @@ CREATE TABLE customer (
 	cusSalesPrev MONEY
 );`;
 
+//Create inital DB
 pool.query(sql_create, [], (err, result) => {
   if (err) {
     return console.error(err.message);
@@ -70,6 +64,7 @@ const getTotalRecords = () => {
         });
 };
 
+//Gets 3 random items from an array
 function get3Random(items)
 {
     for (i = 0; i < 3; ++i )
@@ -83,6 +78,7 @@ function get3Random(items)
     return items.slice( 0, 3 );
 }
 
+//Finds customers similar to given customer, with optional sorting
 const findCustomers = ( customer, sortType ) => {
     // Will build query based on data provided from the form
     //  Use parameters to avoid sql injection
@@ -181,6 +177,7 @@ const findCustomers = ( customer, sortType ) => {
         });
 };
 
+//Adds new customer
 const insertCustomer = (customer) => {
     var i = 0;
     params = [];
@@ -256,7 +253,7 @@ const insertCustomer = (customer) => {
         });
 };
 
-
+//Updates existing customer
 const updateCustomer = (customer) => {
     var i = 0;
     params = [];
@@ -324,7 +321,7 @@ const updateCustomer = (customer) => {
         });
 };
 
-
+//Remove customer
 const deleteCustomer = (customer) => {
     var i = 0;
     params = [];
@@ -353,6 +350,7 @@ const deleteCustomer = (customer) => {
         });
 };
 
+//Define export points
 module.exports.getTotalRecords = getTotalRecords;
 module.exports.findCustomers = findCustomers;
 module.exports.insertCustomer = insertCustomer;
