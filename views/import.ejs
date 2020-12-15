@@ -11,50 +11,61 @@
     <input type="submit"  value="Import Customers">
 </form>
 <p id="result"></p>
+<p id="errors"></p>
 
 <script>
     /*
     TODO:
-    -Load file on submit
-    -Wait state
-    -Import summary
-     -Records processed
-     -Successful inserts
-     -Failed inserts
-     -Error log
     -Database key
     -Document
     -Deploy
     -Submit
     */
+    var gFileReader = new FileReader();
+    gFileReader.onload = function(){ loadCustomers( gFileReader.result ); }
     var gCustomers = [];
     var gSendIdx = 0;
-    const fileSelector = document.getElementById('filename');
-    fileSelector.addEventListener('change', (event) => {
-        var fr=new FileReader(); 
-        fr.onload=function()
-        { 
-            document.getElementById('result') .innerHTML="";
-            gCustomers = [];
-            const lines = fr.result.split(/\r?\n/);
-            for( i = 0 ; i <  lines.length; ++i )
-            {
-                fields = lines[i].split(",");
-                var customer =
-                { 
+    var gSuccessCount = 0;
+    var gErrorCount = 0;
+
+    function loadCustomers( result )
+    { 
+        document.getElementById('result') .innerHTML="";
+        gCustomers = [];
+        const lines = result.split(/\r?\n/);
+        for( i = 0 ; i <  lines.length; ++i )
+        {
+            fields = lines[i].split(",");
+            var customer =
+            { 
                 cusId : fields[ 0 ],
                 cusFname : fields[ 1 ],
                 cusLname : fields[ 2 ],
                 cusState : fields[ 3 ],
                 cusSalesYTD : fields[ 4 ],
                 cusSalesPrev : fields[ 5 ]
-                };
-                gCustomers.push( customer );
-            }
-        } 
-                
-        fr.readAsText(event.target.files[0]); 
+            };
+            gCustomers.push( customer );
+        }
+    } 
+
+    function displayProgress( resultElement )
+    {
+        resultElement.innerHTML = "<h3>Import Summary</h3>";
+        resultElement.innerHTML += `<b>Records Processed:</b> ${gSendIdx}<br/>`;
+        resultElement.innerHTML += `<b>Records Inserted Successfully:</b> ${gSuccessCount}<br/>`;
+        resultElement.innerHTML += `<b>Records Not Inserted:</b> ${gErrorCount}<br/>`;
+    }
+
+    const fileSelector = document.getElementById('filename');
+    fileSelector.addEventListener('change', (event) => {
+        gFileReader.readAsText(event.target.files[0]); 
     });
+
+    if( fileSelector.files.length > 0 )
+    {
+        gFileReader.readAsText(fileSelector.files[0]);
+    }
 
     function sendNextRequest()
     {
@@ -76,19 +87,33 @@
             .then(response => response.json())
             .then(result => {
                 const resultElement = document.getElementById("result");
-                if (result.trans === "Error") {
-                    resultElement.innerText = `Error occurred! \n${result.result}`
-                } else {
+                const errorsElement = document.getElementById("errors");
+                if (result.trans === "error")
+                {
+                    errorsElement.innerText += `${result.result}\n`;
+                    ++gErrorCount;
+                }
+                else
+                {
                     resultElement.innerText = result.result;
+                    ++gSuccessCount;
                 };
 
                 ++gSendIdx;
+                displayProgress( resultElement );
                 sendNextRequest();
             })
             .catch(err => {
-                document.getElementById("result").textContent = `Error: ${err.message}`;
+                const resultElement = document.getElementById("result");
+                const errorsElement = document.getElementById("errors");
 
+                resultElement.textContent = `Error: ${err.message}`;
+                errorsElement.textContent += `Error: ${err.message}`;
+
+                ++gErrorCount;
                 ++gSendIdx;
+
+                displayProgress( resultElement );
                 sendNextRequest();
             });    
         }
@@ -103,8 +128,11 @@
       }
       else
       {
-        document.getElementById('result') .innerHTML="";
+        document.getElementById('result') .innerHTML="<h3>Waiting for Results...</h3>";
+        document.getElementById('errors') .innerText="Errors:\n";
         gSendIdx = 0;
+        gSuccessCount = 0;
+        gErrorCount = 0;
         sendNextRequest();
       }
     });
